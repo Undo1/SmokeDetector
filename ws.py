@@ -44,89 +44,31 @@ load_files()
 filter_auto_ignored_posts()
 
 GlobalVars.wrap.login(username, password)
-GlobalVars.wrapm.login(username, password)
-GlobalVars.wrapso.login(username, password)
 GlobalVars.smokeDetector_user_id[GlobalVars.charcoal_room_id] = str(GlobalVars.wrap.get_me().id)
-GlobalVars.smokeDetector_user_id[GlobalVars.meta_tavern_room_id] = str(GlobalVars.wrapm.get_me().id)
-GlobalVars.smokeDetector_user_id[GlobalVars.socvr_room_id] = str(GlobalVars.wrapso.get_me().id)
-GlobalVars.s = "[ [SmokeDetector](https://github.com/Charcoal-SE/SmokeDetector) ] " \
+GlobalVars.s = "[ [Smokey McSmokeface](https://github.com/Undo1/Smokey-McSmokeface) ] " \
                "SmokeDetector started at [rev " +\
                GlobalVars.commit_with_author +\
-               "](https://github.com/Charcoal-SE/SmokeDetector/commit/" +\
+               "](https://github.com/Undo1/Smokey-McSmokeface/commit/" +\
                GlobalVars.commit +\
                ") (running on " +\
                GlobalVars.location +\
                ")"
-GlobalVars.s_reverted = "[ [SmokeDetector](https://github.com/Charcoal-SE/SmokeDetector) ] " \
-                        "SmokeDetector started in [reverted mode](https://github.com/Charcoal-SE/SmokeDetector/blob/master/RevertedMode.md) " \
+GlobalVars.s_reverted = "[ [Smokey McSmokeface](https://github.com/Undo1/Smokey-McSmokeface) ] " \
+                        "SmokeDetector started in [reverted mode](https://github.com/Undo1/Smokey-McSmokeface/blob/master/RevertedMode.md) " \
                         "at [rev " + \
                         GlobalVars.commit_with_author + \
-                        "](https://github.com/Charcoal-SE/SmokeDetector/commit/" + \
+                        "](https://github.com/Undo1/Smokey-McSmokeface/commit/" + \
                         GlobalVars.commit + \
                         ") (running on " +\
                         GlobalVars.location +\
                         ")"
 
 GlobalVars.charcoal_hq = GlobalVars.wrap.get_room(GlobalVars.charcoal_room_id)
-tavern_id = GlobalVars.meta_tavern_room_id
-GlobalVars.tavern_on_the_meta = GlobalVars.wrapm.get_room(tavern_id)
-GlobalVars.socvr = GlobalVars.wrapso.get_room(GlobalVars.socvr_room_id)
 
 # If you change these sites, please also update the wiki at
 # https://github.com/Charcoal-SE/SmokeDetector/wiki/Chat-Rooms
 
-GlobalVars.specialrooms = [
-    {
-        "sites": ["math.stackexchange.com"],
-        "room": GlobalVars.wrap.get_room("2165"),
-        "unwantedReasons": []
-    },
-    {
-        "sites": ["english.stackexchange.com"],
-        "room": GlobalVars.wrap.get_room("95"),
-        "unwantedReasons": []
-    },
-    {
-        "sites": ["askubuntu.com"],
-        "room": GlobalVars.wrap.get_room("201"),
-        "unwantedReasons": [
-            "All-caps title",   # these should be in uppercased form
-            "All-caps body",
-            "All-caps answer",
-            "Phone number detected",
-            "Repeating characters in title",
-            "Repeating characters in body",
-            "Repeating characters in answer",
-            "Link at end of answer"
-        ],
-        "watcher": True
-    },
-    {
-        "sites": ["parenting.stackexchange.com"],
-        "room": GlobalVars.wrap.get_room("21625"),
-        "unwantedReasons": []
-    },
-    {
-        "sites": ["bitcoin.stackexchange.com"],
-        "room": GlobalVars.wrap.get_room("8089"),
-        "unwantedReasons": []
-    },
-    {
-        "sites": ["judaism.stackexchange.com"],
-        "room": GlobalVars.wrap.get_room("468"),
-        "unwantedReasons": []
-    },
-    {
-        "sites": ["money.stackexchange.com"],
-        "room": GlobalVars.wrap.get_room("35068"),
-        "unwantedReasons": ["All-caps title", "All-caps body", "All-caps answer"]
-    },
-    {
-        "sites": ["movies.stackexchange.com"],
-        "room": GlobalVars.wrap.get_room("40705"),
-        "unwantedReasons": []
-    }
-]
+GlobalVars.specialrooms = []
 
 
 def restart_automatically(time_in_seconds):
@@ -140,12 +82,8 @@ DeletionWatcher.update_site_id_list()
 ws = websocket.create_connection("ws://qa.sockets.stackexchange.com/")
 ws.send("155-questions-active")
 GlobalVars.charcoal_hq.join()
-GlobalVars.tavern_on_the_meta.join()
-GlobalVars.socvr.join()
 
 GlobalVars.charcoal_hq.watch_socket(watcher)
-GlobalVars.tavern_on_the_meta.watch_socket(watcher)
-GlobalVars.socvr.watch_socket(watcher)
 for room in GlobalVars.specialrooms:
     if "watcher" in room:
         room["room"].join()
@@ -163,12 +101,6 @@ while True:
         a = ws.recv()
         if a is not None and a != "":
             is_spam, reason, why = check_if_spam_json(a)
-            if is_spam:
-                t = Thread(target=GlobalVars.bodyfetcher.add_to_queue, args=(a, True))
-                t.start()
-            else:
-                t = Thread(target=GlobalVars.bodyfetcher.add_to_queue, args=(a,))
-                t.start()
     except Exception, e:
         exc_type, exc_obj, exc_tb = sys.exc_info()
         now = datetime.utcnow()
