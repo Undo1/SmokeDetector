@@ -6,6 +6,7 @@ from metasmoke import Metasmoke
 from globalvars import GlobalVars
 import os
 import re
+import requests
 from datetime import datetime
 from utcdate import UtcDate
 from apigetpost import api_get_post
@@ -160,6 +161,14 @@ def watcher(ev, wrap2):
 
 
 def handle_commands(content_lower, message_parts, ev_room, ev_room_name, ev_user_id, ev_user_name, wrap2, content, message_id):
+    if content_lower.startswith("!!/parse") \
+            and is_privileged(ev_room, ev_user_id, wrap2):
+        string_to_parse = content[9:]
+        print string_to_parse
+        response = requests.get("http://localhost:8000/?q=" + string_to_parse)
+        print response.text
+        GlobalVars.charcoal_hq.send_message('    ' + ('\n    ').join(response.text.split('\n')), False)
+
     return
 
     message_url = "//chat.{host}/transcript/message/{id}#{id}".format(host=wrap2.host, id=message_id)
