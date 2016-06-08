@@ -89,10 +89,10 @@ for room in GlobalVars.specialrooms:
         room["room"].join()
         room["room"].watch_socket(special_room_watcher)
 
-if "first_start" in sys.argv and GlobalVars.on_master:
-    GlobalVars.charcoal_hq.send_message(GlobalVars.s)
-elif "first_start" in sys.argv and not GlobalVars.on_master:
-    GlobalVars.charcoal_hq.send_message(GlobalVars.s_reverted)
+#if "first_start" in sys.argv and GlobalVars.on_master:
+#    GlobalVars.charcoal_hq.send_message(GlobalVars.s)
+#elif "first_start" in sys.argv and not GlobalVars.on_master:
+#    GlobalVars.charcoal_hq.send_message(GlobalVars.s_reverted)
 
 Metasmoke.send_status_ping()  # This will call itself every minute or so
 
@@ -119,7 +119,7 @@ while True:
             os._exit(4)
         ws = websocket.create_connection("ws://qa.sockets.stackexchange.com/")
         ws.send("155-questions-active")
-        GlobalVars.charcoal_hq.send_message("Recovered from `" + exception_only + "`")
+        # GlobalVars.charcoal_hq.send_message("Recovered from `" + exception_only + "`")
 
 now = datetime.utcnow()
 delta = UtcDate.startup_utc_date - now
